@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 def transcribe_hindi_audio(audio_path, output_path):
     try:
         # Perform transcription using API with large model
-        api_key = "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";
+        api_key = "";
         
         logger.info(f"Starting transcription of {audio_path}")
         with open(audio_path, 'rb') as audio_file:
