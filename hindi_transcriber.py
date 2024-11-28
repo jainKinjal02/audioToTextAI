@@ -16,9 +16,11 @@ def split_audio(audio_path, chunk_length_ms):
     audio = AudioSegment.from_file(audio_path)
     chunks = []
     
+    os.makedirs(output_dir, exist_ok=True)
+
     for i in range(0, len(audio), chunk_length_ms):
         chunk = audio[i:i + chunk_length_ms]
-        chunk_name = f"chunk_{i // chunk_length_ms}.mp3"
+        chunk_name = os.path.join(output_dir, f"chunk_{i // chunk_length_ms}.mp3")  # Save in the specified directory
         chunk.export(chunk_name, format="mp3")
         chunks.append(chunk_name)
     
@@ -64,7 +66,7 @@ def improve_text(original_text):
         improvement_completion = client.chat.completions.create(
             model="gpt-4o",
             messages=[
-                {"role": "system", "content": "You are an expert in Hindi Language and Jain Scriptures. You will be provided with a hindi transcript. There are mistakes in the transcription due to limitation in hindi speech to text system. Your task is to get the correct hindi words ,keep the content and intent as it is. Do not skip any details - just correct incoherent parts of the text. Output only the final hindi text with all things said in the audio and nothing else."},
+                {"role": "system", "content": "You are an expert in Hindi And Sanskrit Language and Jain Scriptures. You will be provided with a hindi and a little mixed Sanskrit transcript. There are mistakes in the transcription due to limitation in hindi speech to text system. Your task is to get the correct hindi words , keep Sanskrit slokas as it is ,keep the content and intent as it is. Do not skip any details - just correct incoherent parts of the text. Output only the final hindi text with Sanskrit words with all things said in the audio and nothing else."},
                 {
                     "role": "user",
                     "content": f"{original_text}"
@@ -80,10 +82,11 @@ def improve_text(original_text):
 
 # Example usage
 if __name__ == "__main__":
-    audio_file = "/Users/kinjal/Desktop/MyProjects/audioToText/मंगलाचरण .m4a"  # Update to your audio file
-    output_file = "hindi_transcription_1.txt"
+    audio_file = "/Users/kinjal/Desktop/MyProjects/audioToText/audio/ShreeUmashankarJoshiMarg.wav"  # Update to your audio file
+    #output_file = "hindi_transcription_1.txt"
+    output_dir = "chunks"
     chunk_length = 10 * 60 * 1000  # 3 minutes in milliseconds
-
+    
     # Step 1: Split the audio
     chunks = split_audio(audio_file, chunk_length)
 
@@ -103,6 +106,8 @@ if __name__ == "__main__":
             logger.error(f"An error occurred while processing {chunk}: {str(e)}")
 
     # Step 4: Save the full transcription to a file
+    base_name = os.path.splitext(os.path.basename(audio_file))[0]  # Get the base name of the audio file
+    output_file = f"{base_name}.txt" 
     with open(output_file, 'w', encoding='utf-8') as f:
         f.write(full_transcription)
 
