@@ -3,7 +3,7 @@ import os
 
 # Set your API key directly in the code (ensure this is secure)
 fal_client.api_key = os.getenv("FAL_KEY")  # Ensure FAL_KEY is set in your environment
-
+# FAL AI is as powerful as open AIs whisper
 def on_queue_update(update):
     """Callback function to handle queue updates."""
     if isinstance(update, fal_client.InProgress):
